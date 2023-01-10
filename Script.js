@@ -6,7 +6,8 @@ var c = canvas.getContext("2d");
 
 var settings = {
   width: 20, // number of cells on the x or y axis
-  gap: 0.1 // ratio of cell size to gap between cells
+  gap: 0.1, // ratio of cell size to gap between cells
+  snakeColor: "green"
 }
 
 var board = {
@@ -36,12 +37,23 @@ function drawSegment(location) {
 	
   checkIsCoord(location);
   
-  c.fillStyle = "green";
+  c.fillStyle = settings.snakeColor;
   c.fillRect(board.startX + settings.gap * board.cellSize + (location.x * (board.cellSize + (board.cellSize * settings.gap))), settings.gap * board.cellSize + (location.y * (board.cellSize + (board.cellSize * settings.gap))), board.cellSize, board.cellSize); // gap + (cellSizeWithGap*x)
 }
 
-function drawGap(v, v1, direction) { // v and v1 are the x or y cells it is between, direction can either be 
-	
+function drawGap(location, direction) { // v and v1 are the x or y cells it is between, direction can either be 
+	checkIsDirection(direction);
+  checkIsCoord(location);
+  
+  c.fillStyle=settings.snakeColor;
+  
+  if (direction==directions.right){
+  	c.fillRect(board.cellSize*settings.gap+board.cellSize+board.startX + (location.x*(board.cellSize+(board.cellSize*settings.gap))),  settings.gap * board.cellSize + (location.y * (board.cellSize + (board.cellSize * settings.gap))), board.cellSize*settings.gap, board.cellSize);
+  } else if (direction == directions.down) {
+  	c.fillRect()
+  } else {
+  	throw new Error("direction is not right or down");
+  }
 }
 
 function nextFrame() {
