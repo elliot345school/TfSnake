@@ -1,4 +1,3 @@
-
 var canvas = document.getElementById("canvas");
 var c = canvas.getContext("2d");
 
@@ -50,7 +49,7 @@ function drawGap(location, direction) { // v and v1 are the x or y cells it is b
   if (direction==directions.right){
   	c.fillRect(board.cellSize*settings.gap+board.cellSize+board.startX + (location.x*(board.cellSize+(board.cellSize*settings.gap))),  settings.gap * board.cellSize + (location.y * (board.cellSize + (board.cellSize * settings.gap))), board.cellSize*settings.gap, board.cellSize);
   } else if (direction == directions.down) {
-  	c.fillRect()
+  	c.fillRect(board.startX+board.cellSize*settings.gap+((board.cellSize+board.cellSize*settings.gap))*location.x, 2*board.cellSize*settings.gap+(board.cellSize+(settings.gap*board.cellSize))*(location.y+1), board.cellSize, settings.gap*board.cellSize);
   } else {
   	throw new Error("direction is not right or down");
   }
@@ -73,6 +72,9 @@ function render() {
   // adding border of actual game
   c.fillStyle = "black";
   c.strokeRect(board.startX, 0, board.gameWidth, board.gameWidth);
+  
+  drawSegment(genCoord(0, 0));
+  drawGap(genCoord(0, 0), directions.down);
 }
 
 function genCoord(x, y) { // short for generate coordinate
