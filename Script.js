@@ -18,7 +18,14 @@ var board = {
 var fps = 30;
 var msPerFrame = (1 / fps) * 1000 // milliseconds in each frame
 
-setInterval(nextFrame, (1 / fps) * 1000); // setInterval accepts milliseconds, so seconds have to be multiplied by 1000
+const directions = {
+	up: "up",
+  down: "down",
+  left: "left",
+  right: "right"
+}
+
+var a=setInterval(nextFrame, (1 / fps) * 1000); // setInterval accepts milliseconds, so seconds have to be multiplied by 1000
 
 
 function drawSnake(segments) {
@@ -26,9 +33,15 @@ function drawSnake(segments) {
 }
 
 function drawSegment(location) {
-
+	
+  checkIsCoord(location);
+  
   c.fillStyle = "green";
   c.fillRect(board.startX + settings.gap * board.cellSize + (location.x * (board.cellSize + (board.cellSize * settings.gap))), settings.gap * board.cellSize + (location.y * (board.cellSize + (board.cellSize * settings.gap))), board.cellSize, board.cellSize); // gap + (cellSizeWithGap*x)
+}
+
+function drawGap(v, v1, direction) { // v and v1 are the x or y cells it is between, direction can either be 
+	
 }
 
 function nextFrame() {
@@ -48,13 +61,25 @@ function render() {
   // adding border of actual game
   c.fillStyle = "black";
   c.strokeRect(board.startX, 0, board.gameWidth, board.gameWidth);
-
-  //drawSegment(genCoord(2, 3));
 }
 
 function genCoord(x, y) { // short for generate coordinate
   return {
     x: x,
     y: y
+  }
+}
+
+// throws error if the given value is not a coordinate
+// usefull if programmer keeps using (0, 0) in a function instead of genCoord(0, 0)
+
+function checkIsCoord(coord) {
+	if (coord.x==undefined) {
+  	throw new Error("Not a coord");
+  }
+}
+function checkIsDirection(direction) {
+	if (direction!=directions.up&&direction!=directions.down&&direction!=directions.left&&direction!=directions.right) {
+  	throw new Error ("Not a direction");
   }
 }
