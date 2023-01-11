@@ -27,9 +27,22 @@ const directions = {
 
 var a=setInterval(nextFrame, (1 / fps) * 1000); // setInterval accepts milliseconds, so seconds have to be multiplied by 1000
 
+var snake=genSnake(genCoord(5, 5), 3);
 
-function drawSnake(segments) {
+function drawSnake(snake) {
 
+	var segments = snake.segments;
+
+	for (var i = 0;i<segments.length;i++) {
+  	checkIsCoord(segments[i]);
+  }
+  
+  for (var i = 0; i<segments.length-1;i++) {
+  	drawSegment(segments[i]);
+    drawGap(segments[i], segments[i+1]);
+  }
+  
+  drawSegment(segments[i]);
 }
 
 function drawSegment(location) {
@@ -40,16 +53,44 @@ function drawSegment(location) {
   c.fillRect(board.startX + settings.gap * board.cellSize + (location.x * (board.cellSize + (board.cellSize * settings.gap))), settings.gap * board.cellSize + (location.y * (board.cellSize + (board.cellSize * settings.gap))), board.cellSize, board.cellSize); // gap + (cellSizeWithGap*x)
 }
 
-function drawGap(location, direction) { // v and v1 are the x or y cells it is between, direction can either be 
-	checkIsDirection(direction);
+function drawGap(location, location1) { // v and v1 are the x or y cells it is between, direction can either be 
   checkIsCoord(location);
+  checkIsCoord(location1);
+  
+  var direction;
+  
+  if (location.x==location1.x) {
+  	direction = directions.down;
+    
+    // if location 1 and 2 are in bottom to top series, reverse
+    
+    if (location.y>location1.y) {
+    	var tempLocation=location1;
+      var tempLocation1=location;
+      
+      location=tempLocation;
+      location1=tempLocation1;
+    }
+  } else if (location.y==location1.y) {
+  	direction=directions.right;
+    
+    if (location.x>location1.x) {
+    	var tempLocation=location1;
+      var tempLocation1=location;
+      
+      location=tempLocation;
+      location1=tempLocation1;
+    }
+  } else {
+  	throw new Error ("Drawing gap between two cells that are not connected");
+  }
   
   c.fillStyle=settings.snakeColor;
   
   if (direction==directions.right){
   	c.fillRect(board.cellSize*settings.gap+board.cellSize+board.startX + (location.x*(board.cellSize+(board.cellSize*settings.gap))),  settings.gap * board.cellSize + (location.y * (board.cellSize + (board.cellSize * settings.gap))), board.cellSize*settings.gap, board.cellSize);
   } else if (direction == directions.down) {
-  	c.fillRect(board.startX+board.cellSize*settings.gap+((board.cellSize+board.cellSize*settings.gap))*location.x, 2*board.cellSize*settings.gap+(board.cellSize+(settings.gap*board.cellSize))*(location.y+1), board.cellSize, settings.gap*board.cellSize);
+  	c.fillRect(board.startX+board.cellSize*settings.gap+((board.cellSize+board.cellSize*settings.gap))*location.x, ((location.y+1) * (board.cellSize + (board.cellSize * settings.gap))), board.cellSize, settings.gap*board.cellSize);
   } else {
   	throw new Error("direction is not right or down");
   }
@@ -61,6 +102,7 @@ function nextFrame() {
 }
 
 function tick() {
+	
 }
 
 function render() {
@@ -73,8 +115,8 @@ function render() {
   c.fillStyle = "black";
   c.strokeRect(board.startX, 0, board.gameWidth, board.gameWidth);
   
-  drawSegment(genCoord(0, 0));
-  drawGap(genCoord(0, 0), directions.down);
+  drawSnake(snake);
+  snake.move();
 }
 
 function genCoord(x, y) { // short for generate coordinate
@@ -82,6 +124,25 @@ function genCoord(x, y) { // short for generate coordinate
     x: x,
     y: y
   }
+}
+
+function genSnake(coord, startLength) {
+
+	checkIsCoord(coord);
+
+	var segments = [];
+  
+  for (var i=0;i<startLength;i++){
+  	segments.push(genCoord(coord.x-i, coord.y));
+  }
+  
+  return {
+  	headLocation: coord,
+    segments: segments,
+    move: function (direction) {
+    	
+    }
+  };
 }
 
 // throws error if the given value is not a coordinate
