@@ -4,8 +4,9 @@ var c = canvas.getContext("2d");
 // settings
 
 var settings = {
-  width: 20, // number of cells on the x or y axis
+  width: 5, // number of cells on the x or y axis
   gap: 0.1, // ratio of cell size to gap between cells
+  snakeStartLength: 4,
   snakeColor: "green"
 }
 
@@ -15,7 +16,7 @@ var board = {
   cellSize: canvas.height / (settings.width + ((settings.width + 2) * settings.gap))
 };
 
-var fps = 30;
+var fps = 1;
 var msPerFrame = (1 / fps) * 1000 // milliseconds in each frame
 
 const directions = {
@@ -27,7 +28,7 @@ const directions = {
 
 var a=setInterval(nextFrame, (1 / fps) * 1000); // setInterval accepts milliseconds, so seconds have to be multiplied by 1000
 
-var snake=genSnake(genCoord(5, 5), 3);
+var snake=genSnake(genCoord(2, 2), settings.snakeStartLength);
 
 function drawSnake(snake) {
 
@@ -102,7 +103,7 @@ function nextFrame() {
 }
 
 function tick() {
-	
+	snake.move(directions.right, snake);
 }
 
 function render() {
@@ -116,7 +117,6 @@ function render() {
   c.strokeRect(board.startX, 0, board.gameWidth, board.gameWidth);
   
   drawSnake(snake);
-  snake.move();
 }
 
 function genCoord(x, y) { // short for generate coordinate
@@ -137,10 +137,16 @@ function genSnake(coord, startLength) {
   }
   
   return {
-  	headLocation: coord,
     segments: segments,
-    move: function (direction) {
-    	
+    move: function (direction, self) {
+    	var head=self.segments[0];
+        
+    	self.segments.shift();
+        
+        if (direction==directions.right) {
+        	head.x++;
+        }
+        self.segments.push(head);
     }
   };
 }
